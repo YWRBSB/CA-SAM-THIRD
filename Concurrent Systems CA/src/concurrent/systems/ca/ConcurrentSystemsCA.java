@@ -21,131 +21,62 @@ public class ConcurrentSystemsCA {
     public static void main(String[] args) {
         // TODO code application logic here
 
-        Deviation();
-        MatrixMultiplier();
-        Sort();
+
+        Deviation deviation = new Deviation();
+        MatrixMultiplier matrixMultiplier = new MatrixMultiplier();
+        Sort sort = new Sort();
+
+       
+        Thread deviationThread = new Thread(() -> {
+            deviation.Deviation();
+        });
+
+        Thread matrixMultiplierThread = new Thread(() -> {
+           
+            try {
+                // Wait for deviation method to complete
+               deviationThread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            matrixMultiplier.MatrixMultiplier();
+        });
+      
+
+        Thread mergeSortThread = new Thread(() -> {
+           
+            
+              try {
+                // Wait for matrix multiplier to complete
+               matrixMultiplierThread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            sort.Sort();
+        });
+
+        // Start the threads
+        deviationThread.start();
+        matrixMultiplierThread.start();
+        mergeSortThread.start();
+
+        // Wait for all threads to complete
+        try {
+            deviationThread.join();
+            matrixMultiplierThread.join();
+            mergeSortThread.join();
+            
+       
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+         System.out.println();
+        System.out.println("All threads have completed.");
+        
+       
+    
     }
 
 }
 
-// multiply matrices 
-// String csvFile = "data.csv";
-//        String line = "";
-//        String cvsSplitBy = ",";
-//        int n = 10;
-//        double[][] A = new double[n][n];
-//        double[][] B = new double[n][n];
-//        double[][] C = new double[n][n];
-//
-//        try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
-//            int i = 0;
-//            while ((line = br.readLine()) != null && i < 20) {
-//                String[] row = line.split(cvsSplitBy);
-//                for (int j = 0; j < 10; j++) {
-//                    if (j < 5) {
-//                        A[i][j] = Double.parseDouble(row[j]);
-//                    } else {
-//                        B[i][j - 5] = Double.parseDouble(row[j]);
-//                    }
-//                }
-//                i++;
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//
-//        // Multiply matrices A and B together and store the result in matrix C
-//        for (int i = 0; i < n; i++) {
-//            for (int j = 0; j < n; j++) {
-//                C[i][j] = 0;
-//                for (int k = 0; k < n; k++) {
-//                    C[i][j] += A[i][k] * B[k][j];
-//                }
-//            }
-//        }
-//
-//        // Print the result matrix C
-//        for (int i = 0; i < n; i++) {
-//            for (int j = 0; j < n; j++) {
-//                System.out.print(C[i][j] + " ");
-//            }
-//            System.out.println();
-//        }
-//    }
-//}
-//public class MergeSorter {
-//    public static void main(String[] args) {
-//        String csvFile = "data.csv";
-//        String line = "";
-//        String cvsSplitBy = ",";
-//        int n = 200;
-//        double[] data = new double[n];
-//
-//        try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
-//            int i = 0;
-//            while ((line = br.readLine()) != null && i < n) {
-//                String[] row = line.split(cvsSplitBy);
-//                for (int j = 0; j < 10; j++) {
-//                    data[i] = Double.parseDouble(row[j]);
-//                    i++;
-//                }
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//
-//        mergeSortDescending(data, 0, n - 1);
-//
-//        for (int i = 0; i < n; i++) {
-//            System.out.print(data[i] + " ");
-//        }
-//    }
-//
-//    public static void mergeSortDescending(double[] arr, int l, int r) {
-//        if (l < r) {
-//            int m = (l + r) / 2;
-//            mergeSortDescending(arr, l, m);
-//            mergeSortDescending(arr, m + 1, r);
-//            mergeDescending(arr, l, m, r);
-//        }
-//    }
-//
-//    public static void mergeDescending(double[] arr, int l, int m, int r) {
-//        int n1 = m - l + 1;
-//        int n2 = r - m;
-//
-//        double[] L = new double[n1];
-//        double[] R = new double[n2];
-//
-//        for (int i = 0; i < n1; i++)
-//            L[i] = arr[l + i];
-//        for (int j = 0; j < n2; j++)
-//            R[j] = arr[m + 1 + j];
-//
-//        int i = 0, j = 0;
-//        int k = l;
-//
-//        while (i < n1 && j < n2) {
-//            if (L[i] >= R[j]) {
-//                arr[k] = L[i];
-//                i++;
-//            } else {
-//                arr[k] = R[j];
-//                j++;
-//            }
-//            k++;
-//        }
-//
-//        while (i < n1) {
-//            arr[k] = L[i];
-//            i++;
-//            k++;
-//        }
-//
-//        while (j < n2) {
-//            arr[k] = R[j];
-//            j++;
-//            k++;
-//        }
-//    }
-//}
